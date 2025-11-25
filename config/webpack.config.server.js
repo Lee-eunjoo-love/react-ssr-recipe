@@ -27,6 +27,7 @@ module.exports = {
     rules: [
       {
         oneOf: [
+          // 자바스크립트를 위한 처리
           {
             test: /\.(js|mjs|jsx|ts|tsx)$/,
             include: paths.appSrc,
@@ -147,7 +148,7 @@ module.exports = {
   resolve: {
     modules: ["node_modules"],
   },
-  // node_modules 에서 불러오는 것을 제외하고 번들링 하도록 설정. 서버에는 결과물 안에 리액트 라이브러리가 들어있지 않아도 node_modules 를 통해 바로 불러 올 수 있으므로 서버를 위한 번들링시에는 node_modules 에서 불러오는 것 제외.
+  // node_modules 에서 불러오는 것을 제외하고 번들링 하도록 설정. (서버에는 결과물 안에 리액트 라이브러리가 들어있지 않아도 node_modules 를 통해 바로 불러 올 수 있으므로 서버를 위한 번들링시에는 node_modules 에서 불러오는 것 제외.)
   externals: [
     nodeExternals({
       allowlist: [/@babel/], // @babel 로 시작하는 모듈은 번들링에 포함. (node_modules 에서 불러오는 것은 제외.)
