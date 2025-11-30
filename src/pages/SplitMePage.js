@@ -1,5 +1,4 @@
 import { useState } from "react";
-import logo from "../logo.svg";
 import "../App.css";
 import loadable from "@loadable/component";
 const SplitMe = loadable(() => import("../components/SplitMe"), {
@@ -19,9 +18,8 @@ const SplitMePage = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p onClick={onClick} onMouseOver={onMouseOver}>
-          Hello React!
+          Hello React!!!
         </p>
         {visible && <SplitMe />}
       </header>

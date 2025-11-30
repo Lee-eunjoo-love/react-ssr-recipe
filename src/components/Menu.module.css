@@ -1,14 +1,14 @@
-ul {
+.menu > ul {
   list-style-type: none;
   display: flex;
 }
 
-li {
+.menu > ul > li {
   margin: 0.5rem 1rem;
   padding: 1rem;
 }
 
-li > a {
+.menu > ul > li > a {
   text-decoration: none;
   color: #756a6aff;
   &:hover {

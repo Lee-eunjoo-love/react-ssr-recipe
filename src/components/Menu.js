@@ -1,16 +1,21 @@
 import { Link } from "react-router-dom";
-import "./Menu.css";
+import style from "./Menu.module.css";
 
 const Menu = () => {
   return (
-    <ul>
-      <li>
-        <Link to="/red">Red</Link>
-      </li>
-      <li>
-        <Link to="/blue">Blue</Link>
-      </li>
-    </ul>
+    <div className={`${style.menu}`}>
+      <ul>
+        <li>
+          <Link to="/red">Red</Link>
+        </li>
+        <li>
+          <Link to="/blue">Blue</Link>
+        </li>
+        <li>
+          <Link to="/users">Users</Link>
+        </li>
+      </ul>
+    </div>
   );
 };
 
