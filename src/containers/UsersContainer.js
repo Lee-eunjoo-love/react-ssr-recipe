@@ -9,7 +9,7 @@ const UsersContainer = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (users) return;
+    if (users) return; // #. 중복 호출 차단
     dispatch(getUsers());
   }, [dispatch, users]);
 

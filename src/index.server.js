@@ -7,11 +7,17 @@ import { StaticRouter } from "react-router-dom";
 import App from "./App";
 import path from "path"; // #. 정적 파일 제공하기
 import fs from "fs"; // #. JS 와 CSS 파일 불러오기
+// #. redux
 import { legacy_createStore as createStore, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { thunk } from "redux-thunk";
-import rootReducer from "./modules";
+import rootReducer, { rootSaga } from "./modules";
+// #. PreloadContext
 import PreloadContext from "./lib/PreloadContext";
+// #. redux-saga
+import createSagaMiddleware, { END } from "redux-saga";
+
+const sagaMiddleware = createSagaMiddleware();
 
 // #. JS 와 CSS 파일 불러오기
 const manifest = JSON.parse(
@@ -42,7 +48,16 @@ const app = express();
 
 const serverRender = async (req, res, next) => {
   const context = {};
-  const store = createStore(rootReducer, applyMiddleware(thunk));
+  const store = createStore(
+    rootReducer, // #.
+    applyMiddleware(
+      thunk, // #.
+      sagaMiddleware // #.
+    )
+  );
+
+  const sagaPromise = sagaMiddleware.run(rootSaga).toPromise();
+
   const preloadContext = {
     done: false,
     promises: [],
@@ -58,7 +73,9 @@ const serverRender = async (req, res, next) => {
   );
 
   ReactDOMServer.renderToStaticMarkup(jsx);
+  store.dispatch(END);
   try {
+    await sagaPromise;
     await Promise.all(preloadContext.promises);
   } catch (e) {
     return res.status(500);
