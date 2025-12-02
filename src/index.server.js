@@ -16,10 +16,35 @@ import rootReducer, { rootSaga } from "./modules";
 import PreloadContext from "./lib/PreloadContext";
 // #. redux-saga
 import createSagaMiddleware, { END } from "redux-saga";
+// #. @loadable
+import { ChunkExtractor, ChunkExtractorManager } from "@loadable/server"; // #. [청크 파일 경로 추출]
+
+// #. [청크 파일 경로 추출]
+const statsFile = path.resolve("./build/loadable-stats.json");
 
 const sagaMiddleware = createSagaMiddleware();
 
+// #. [청크 파일 경로 추출]
+/*
+function createPage(root, tags) {
+  return `<!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="utf-8" />
+      <link rel="shortcut icon" href="/favicon.ico" />
+      ${tags?.styles || ""}
+      ${tags?.links || ""}
+    </head>
+    <body>
+      <noscript>You need to enable JavaScript to run this app.</noscript>
+      <div id="root">${root}</div>
+      ${tags?.scripts || ""}
+    </body>
+  </html>
+  `;
+} //*/
 // #. JS 와 CSS 파일 불러오기
+//*
 const manifest = JSON.parse(
   fs.readFileSync(path.resolve("./build/asset-manifest.json"), "utf-8")
 );
@@ -42,7 +67,7 @@ function createPage(root, stateScript) {
     </body>
   </html>
   `;
-}
+} //*/
 
 const app = express();
 
@@ -62,14 +87,20 @@ const serverRender = async (req, res, next) => {
     done: false,
     promises: [],
   };
+
+  // #. [청크 파일 경로 추출]
+  const extractor = new ChunkExtractor({ statsFile });
+
   const jsx = (
-    <PreloadContext.Provider value={preloadContext}>
-      <Provider store={store}>
-        <StaticRouter location={req.url} context={context}>
-          <App />
-        </StaticRouter>
-      </Provider>
-    </PreloadContext.Provider>
+    <ChunkExtractorManager extractor={extractor}>
+      <PreloadContext.Provider value={preloadContext}>
+        <Provider store={store}>
+          <StaticRouter location={req.url} context={context}>
+            <App />
+          </StaticRouter>
+        </Provider>
+      </PreloadContext.Provider>
+    </ChunkExtractorManager>
   );
 
   ReactDOMServer.renderToStaticMarkup(jsx);
@@ -85,7 +116,13 @@ const serverRender = async (req, res, next) => {
   const root = ReactDOMServer.renderToString(jsx);
   const stateString = JSON.stringify(store.getState()).replace(/</g, "\\u003c");
   const stateScript = `<script>__PRELOADED_STATE__ = ${stateString}</script>`;
-  res.send(createPage(root), stateScript);
+  res.send(createPage(root, stateScript));
+  /*const tags = {
+    scripts: stateScript + extractor.getScriptTags(),
+    links: extractor.getLinkTags(),
+    styles: extractor.getStyleTags(),
+  };
+  res.send(createPage(root), tags);*/
 };
 
 // #. 정적 파일 제공하기

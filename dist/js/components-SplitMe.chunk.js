@@ -1,0 +1,1 @@
+"use strict";exports.id=470,exports.ids=[470],exports.modules={865:(s,e,t)=>{t.r(e),t.d(e,{default:()=>r});var d=t(732);const r=()=>(0,d.jsx)("div",{children:"Split Me"})}};

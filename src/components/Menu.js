@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import style from "./Menu.module.css";
+import "./Menu.css";
 
 const Menu = () => {
   return (
-    <div className={`${style.menu}`}>
+    <div className="menu">
       <ul>
         <li>
           <Link to="/red">Red</Link>
